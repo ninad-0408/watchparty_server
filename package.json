@@ -1,0 +1,21 @@
+{
+  "name": "watchparty_backend",
+  "version": "1.0.0",
+  "description": "This is the backend of watchparty web application",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "author": "Ninad Kalanke, Akshat Gupta, Jay Raikhere",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.1.4",
+    "nodemon": "^2.0.15"
+  }
+}
