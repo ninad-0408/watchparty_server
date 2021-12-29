@@ -39,3 +39,10 @@ export const dataUnaccesable = (res) => {
     err.status = 503;
     return res.status(err.status).json({ err });
 };
+
+export const serverError = (res) => {
+    var err = new Error();
+    err.message = "Unable to process your request right now. Try again later."
+    err.status = 500;
+    return res.status(err.status).json({ err });
+};
