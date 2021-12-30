@@ -20,7 +20,7 @@ export const userLogin = (req, res) => {
                         if(check)
                         {
                             const token = jwt.sign({ email: data.email, _id: data._id, username: data.username }, process.env.hashtoken);
-                            return res.status(200).json({ token, message: "You are logged in successfully." });
+                            return res.status(200).json({ user: { name: data.name, email: data.email, _id: data._id, username: data.username }, token, message: "You are logged in successfully." });
                         }
                         else
                         {
@@ -107,7 +107,7 @@ export const userSignup = (req, res) => {
                 .then((data) => {
                     console.log(data);
                     const token = jwt.sign({ email: data.email, _id: data._id, username: data.username }, process.env.hashtoken);
-                    return res.status(200).json({ token, message: "You are signuped successfully." });
+                    return res.status(200).json({ user: { name: data.name, email: data.email, _id: data._id, username: data.username }, token, message: "You are signuped successfully." });
                 })
                 .catch((error) => {
                     console.log(error);
