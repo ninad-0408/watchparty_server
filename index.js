@@ -4,8 +4,9 @@ import cors from 'cors';
 import dotenv from "dotenv";
 dotenv.config();
 
-import userRoute from './routes/userRoute.js';
 import auth from './middlewares/auth.js';
+import userRoute from './routes/userRoute.js';
+import roomRoute from './routes/roomRoute.js';
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(cors());
 
 app.use(auth);
 app.use('/user', userRoute);
+app.use('/room', roomRoute);
 
 app.get('/', (req,res) => res.status(200).json({user: req.user}));
 

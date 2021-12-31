@@ -33,8 +33,7 @@ export const userLogin = (req, res) => {
                     .catch((error) => {
                         console.log(error);
                         return serverError(res);
-                    })
-                
+                    });                
                 
             }
             else
@@ -52,14 +51,13 @@ export const userLogin = (req, res) => {
     
 };
 
-export const userSignup = (req, res) => {
+export const userSignup = async (req, res) => {
     
     const { name, email, username, password, confirmpassword } = req.body;
 
     // check duplicate username
-    userModel.findOne({ username: username })
-        .then((data) => {
-            
+    await userModel.findOne({ username: username })
+        .then((data) => {            
             if(data)
             {
                 let err = new Error();
@@ -75,7 +73,7 @@ export const userSignup = (req, res) => {
 
     
     // check duplicate email
-    userModel.findOne({ email: email })
+    await userModel.findOne({ email: email })
         .then((data) => {   
             if(data)
             {
@@ -101,7 +99,7 @@ export const userSignup = (req, res) => {
 
 
     // hashing password and creating user
-    bcrypt.hash(password, 16)
+    await bcrypt.hash(password, 4)
         .then((hash) => {
             userModel.create({ name, email, username, password: hash })
                 .then((data) => {
@@ -120,3 +118,15 @@ export const userSignup = (req, res) => {
         });    
 
 };
+
+export const getUsers = (req, res) => {
+
+    userModel.find({}, ['username', '_id'])
+        .then((data) => {
+            return res.status(200).json({ users: data });
+        })
+        .catch((error) => {
+            console.log(error);
+            return dataUnaccesable(res);
+        })
+}
