@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import userModel from '../models/userModel.js'
-import { dataUnaccesable, serverError } from '../alerts/errors.js';
+import { dataUnaccesable, serverError, wrongPassword } from '../alerts/errors.js';
 
 export const userLogin = (req, res) => {
 
@@ -23,12 +23,7 @@ export const userLogin = (req, res) => {
                             return res.status(200).json({ user: { name: data.name, email: data.email, _id: data._id, username: data.username }, token, message: "You are logged in successfully." });
                         }
                         else
-                        {
-                            let err = new Error();
-                            err.message = "Invalid Credentials.";
-                            err.status = 403;
-                            return res.status(err.status).json({ err });
-                        }
+                        return wrongPassword(res);
                     })
                     .catch((error) => {
                         console.log(error);
