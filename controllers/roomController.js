@@ -7,11 +7,12 @@ export const createRoom = async (req, res) => {
     
     var body = req.body;
     body.host = req.user._id;
-
+    // console.log(body);
     // check if password is enabled
     if(body.password)
     {
         body.isPassword = true;
+        body.open = false;
         await bcrypt.hash(body.password, 4)
             .then((data) => {
                 body.password = data;
