@@ -46,3 +46,10 @@ export const serverError = (res) => {
     err.status = 500;
     return res.status(err.status).json({ err });
 };
+
+export const wrongPassword = (res) => {
+    var err = new Error();
+    err.message = "Invalid Credentials.";
+    err.status = 403;
+    return res.status(err.status).json({ err });
+}
