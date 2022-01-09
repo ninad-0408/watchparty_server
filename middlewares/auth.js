@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import dotenv from "dotenv";
 dotenv.config();
 
-const auth = (req, res, next) => {
+export const auth = (req, res, next) => {
 
     const token = req.headers.authorization?.split(' ')[1];
 
@@ -12,4 +12,14 @@ const auth = (req, res, next) => {
 
 };
 
-export default auth;
+export const socketAuth = (socket, next) => {
+
+    const token = socket.handshake.headers.authorization?.split(' ')[1];
+
+    if(token)
+    {
+        socket.user = jwt.verify(token, process.env.hashtoken);
+        next();
+    }
+
+};
