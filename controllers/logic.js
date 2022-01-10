@@ -4,7 +4,11 @@ export const addUser = ({ id, username, isAdmin, isHost,room }) => {
     
   
     if(!username || !room) return { error: 'Username and room are required.' };
-
+    const existingUser = users.find((user) => user.room === room && user.username === username);
+    if(existingUser)
+    {
+      return existingUser;
+    }
   
     const user = { id, username, room,isAdmin,isHost };
   
