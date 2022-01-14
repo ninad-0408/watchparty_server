@@ -1,6 +1,6 @@
 var users = [];
 
-export const addUser = ({ id, username, isAdmin, isHost,room }) => {
+export const addUser = ({ _id, username, isAdmin, isHost,room }) => {
     
   
     if(!username || !room) return { error: 'Username and room are required.' };
@@ -10,7 +10,7 @@ export const addUser = ({ id, username, isAdmin, isHost,room }) => {
       return existingUser;
     }
   
-    const user = { id, username, room,isAdmin,isHost };
+    const user = { _id, username, room,isAdmin,isHost };
   
     users.push(user);
  
