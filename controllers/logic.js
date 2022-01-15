@@ -1,6 +1,6 @@
 var users = [];
 
-export const addUser = ({ _id, username, isAdmin, isHost,room }) => {
+export const addUser = ({ _id, username, isAdmin, isHost, room }) => {
     
   
     if(!username || !room) return { error: 'Username and room are required.' };
@@ -10,17 +10,15 @@ export const addUser = ({ _id, username, isAdmin, isHost,room }) => {
       return existingUser;
     }
   
-    const user = { _id, username, room,isAdmin,isHost };
-  
-    users.push(user);
- 
+    const user = { _id, username, room, isAdmin, isHost };
+    users.push(user); 
   
     return user ;
   }
   
  export const removeUser = (id) => {
       
-    const index = users.findIndex((user) => user.id === id);
+    const index = users.findIndex((user) => user._id === id);
   
     if(index !== -1) return users.splice(index, 1)[0];
   }

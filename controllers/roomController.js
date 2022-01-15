@@ -48,13 +48,13 @@ export const delRoom = async (req, res) => {
 
 export const getRooms = async (req, res) => {
 
-	var room = await roomModel.find({ open: true }, ["name", "host"])
+	roomModel.find({ open: true }, ["name", "host"])
 		.populate("host", "name")
 		.then((data) => {
 			return res.status(200).json({ rooms: data });
 		})
 		.catch((error) => {
-			console.log("Database Disconnected");
+			console.log(error);
 			return dataUnaccesable(res);
 		});
 };
