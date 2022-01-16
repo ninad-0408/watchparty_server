@@ -49,7 +49,7 @@ export const delRoom = async (req, res) => {
 export const getRooms = async (req, res) => {
 
 	roomModel.find({ open: true }, ["name", "host"])
-		.populate("host", "name")
+		.populate("host", "username")
 		.then((data) => {
 			return res.status(200).json({ rooms: data });
 		})

@@ -9,16 +9,12 @@ const handleSocket = (io, socket) => {
                 var isHost = false;
                 var isAdmin = false;
 
-                if(data.host === socket.user._id)
+                if(data.host == socket.user._id)
                 {
                     isHost = true;
                     isAdmin = true;
                 }
-                else
-                {
-                    if(data.admins.indexOf(socket.user._id)!==-1)
-                    isAdmin = true;
-                }
+                
                 const user = await addUser({  _id: socket.user._id, username: socket.user.username, isAdmin, isHost, room });
                 socket.join(user.room);
                 const users = getUsersInRoom(user.room);
@@ -31,36 +27,74 @@ const handleSocket = (io, socket) => {
         
     });
 
-    socket.on('message', ({value,roomId}) => {
-        // console.log(roomId);
-        const message=value;
-        const user=getUser(socket.user.username,roomId);
-        // console.log(user);
-        socket.to(user.room).emit('message', { username: socket.user.username, message: message})
+    socket.on('message', ({ value, roomId }) => {
+        const message = value;
+        const user = getUser(socket.user.username,roomId);
+        socket.to(user.room).emit('message', { username: socket.user.username, message })
     });
 
-    socket.on('url', ({roomId,url}) => {
-        // console.log(url);
-        // console.log(roomId);
+    socket.on('url', ({ roomId, url }) => {
         socket.to(roomId).emit('url', url);
     });
 
-    socket.on('seek', (data) => {
-        // console.log(data);
+    socket.on('seek', (data) => { 
         socket.to(data.roomId).emit('seek', data)
     });
 
     socket.on('disconnect', () => {
-        console.log("discoonected");
+        console.log("disconnected");
         const user = removeUser(socket.user._id);
         if(user) {
-            console.log('here2');
-            const users=getUsersInRoom(user.room);
+            const users = getUsersInRoom(user.room);
             io.to(user.room).emit('member-connected', users);
-          }
-        // io.emit('member-connected', users);
-        
-    })
+          }        
+    });
+
+    socket.on('add-admin', (user) => {
+        roomModel.findById(user.room)
+            .then(async (data) => {
+                if(data.host == socket.user._id)
+                {
+                    await removeUser(user._id);
+                    user.isAdmin = true;
+                    user = await addUser(user);
+
+                    const users = getUsersInRoom(user.room);
+                    io.to(user.room).emit('member-connected', users);
+                }
+                else
+                {
+                    socket.to(socket.id).emit('error', { error: 'You are not host.'})
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+                socket.to(socket.id).emit('error', { error });
+            });
+    });
+
+    socket.on('remove-admin', (user) => {
+        roomModel.findById(user.room)
+            .then(async (data) => {
+                if(data.host == socket.user._id)
+                {
+                    await removeUser(user._id);
+                    user.isAdmin = false;
+                    user = await addUser(user);
+
+                    const users = getUsersInRoom(user.room);
+                    io.to(user.room).emit('member-connected', users);
+                }
+                else
+                {
+                    socket.to(socket.id).emit('error', { error: 'You are not host.'})
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+                socket.to(socket.id).emit('error', { error });
+            });
+    });
 
 };
 
