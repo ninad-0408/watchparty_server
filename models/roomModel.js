@@ -7,13 +7,6 @@ const roomSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: 'userModel'
     },
-    admins: {
-        type:[{
-                type: mongoose.Types.ObjectId,
-                ref: 'userModel'
-             }],
-        default: []
-    },
     open: {
         type: Boolean,
         default: true
