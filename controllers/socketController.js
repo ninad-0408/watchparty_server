@@ -15,7 +15,7 @@ const handleSocket = (io, socket) => {
                     isAdmin = true;
                 }
                 
-                const user = await addUser({  _id: socket.user._id, username: socket.user.username, isAdmin, isHost, room });
+                const user = await addUser({  _id: socket.user._id, socketId: socket.id, username: socket.user.username, isAdmin, isHost, room });
                 socket.join(user.room);
                 const users = getUsersInRoom(user.room);
                 io.to(user.room).emit('member-connected', users );
@@ -84,6 +84,33 @@ const handleSocket = (io, socket) => {
 
                     const users = getUsersInRoom(user.room);
                     io.to(user.room).emit('member-connected', users);
+                }
+                else
+                {
+                    socket.to(socket.id).emit('error', { error: 'You are not host.'})
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+                socket.to(socket.id).emit('error', { error });
+            });
+    });
+
+    socket.on('remove-member', (user) => {
+        roomModel.findById(user.room)
+            .then((data) => {
+                if(data.host == socket.user._id)
+                {
+                    removeUser(user._id);
+                    io.sockets.sockets.forEach((soc) => {
+                        if(soc.id === user.socketId)
+                        {
+                            soc.disconnect();
+                            const users = getUsersInRoom(user.room);
+                            io.to(user.room).emit('member-connected', users);
+                        }
+                    });
+
                 }
                 else
                 {
