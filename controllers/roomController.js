@@ -58,3 +58,17 @@ export const getRooms = async (req, res) => {
 			return dataUnaccesable(res);
 		});
 };
+
+export const getRoom = async (req, res) => {
+    const {roomId}=req.params;
+	var room = await roomModel.findOne({ open: true,_id:roomId }, ["name", "host"])
+		.populate("host", "name")
+		.then((data) => {
+			return res.status(200).json({ room: data });
+		})
+		.catch((error) => {
+			console.log("Database Disconnected");
+			return dataUnaccesable(res);
+		});
+};
+
