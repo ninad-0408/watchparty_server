@@ -18,6 +18,9 @@ const handleSocket = (io, socket) => {
                 const user = await addUser({  _id: socket.user._id, socketId: socket.id, username: socket.user.username, isAdmin, isHost, room });
                 socket.join(user.room);
                 const users = getUsersInRoom(user.room);
+                
+    socket.emit('alert',`Welcome ${user.username}`);
+                socket.broadcast.to(user.room).emit('alert', `${user.username} has joined!` );
                 io.to(user.room).emit('member-connected', users );
             })
             .catch((error) => {
@@ -46,6 +49,7 @@ const handleSocket = (io, socket) => {
         const user = removeUser(socket.user._id);
         if(user) {
             const users = getUsersInRoom(user.room);
+            io.to(user.room).emit('alert', `${user.username} has left.` );
             io.to(user.room).emit('member-connected', users);
           }        
     });
