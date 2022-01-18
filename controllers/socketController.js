@@ -19,29 +19,36 @@ const handleSocket = (io, socket) => {
 
                 if(!data.lock || isHost)
                 {
-                    if(data.isPassword && !isHost)
+                    if(data.isPassword && !isHost )
                     {
-                        await bcrypt.compare(password, data.password)
-                            .then(async (check) => {
-                                if(check)
-                                {
-                                    const user = await addUser({  _id: socket.user._id, socketId: socket.id, username: socket.user.username, isAdmin, isHost, room });
-                                    socket.join(user.room);
-                                    const users = getUsersInRoom(user.room);
+                        if(password == '' || password === undefined)
+                        {
+                            socket.to(socket.id).emit('error', { message: 'Wrong password entered!' });
+                        }
+                        else
+                        {
+                            await bcrypt.compare(password, data.password)
+                                .then(async (check) => {
+                                    if(check)
+                                    {
+                                        const user = await addUser({  _id: socket.user._id, socketId: socket.id, username: socket.user.username, isAdmin, isHost, room });
+                                        socket.join(user.room);
+                                        const users = getUsersInRoom(user.room);
                 
-                                    socket.emit('alert',`Welcome ${user.username}`);
-                                    socket.broadcast.to(user.room).emit('alert', `${user.username} has joined!` );
-                                    io.to(user.room).emit('member-connected', users );
-                                }
-                                else
-                                {
-                                    socket.to(socket.id).emit('error', { message: 'Wrong password entered!' });
-                                }
-                            })
-                            .catch((error) => {
-                                console.log(error);
-                                socket.to(socket.id).emit('error', { message: error.message });
-                            });
+                                        socket.emit('alert',`Welcome ${user.username}`);
+                                        socket.broadcast.to(user.room).emit('alert', `${user.username} has joined!` );
+                                        io.to(user.room).emit('member-connected', users );
+                                    }
+                                    else
+                                    {
+                                        socket.to(socket.id).emit('error', { message: 'Wrong password entered!' });
+                                    }
+                                })
+                                .catch((error) => {
+                                    console.log(error);
+                                    socket.to(socket.id).emit('error', { message: error.message });
+                                });
+                        }
                     }
                     else
                     {
