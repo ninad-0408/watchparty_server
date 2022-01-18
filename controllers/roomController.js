@@ -61,7 +61,7 @@ export const getRooms = async (req, res) => {
 
 export const getRoom = async (req, res) => {
     const { roomId } = req.params;
-	roomModel.findById(roomId, ["name", "host", "isPassword", 'open'])
+	roomModel.findById(roomId, ["name", "host", "isPassword", 'open', 'lock'])
 		.then((data) => {
 			return res.status(200).json({ room: data });
 		})
