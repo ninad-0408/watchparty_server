@@ -26,3 +26,7 @@ export const getUser = (username, roomId) =>
 
 export const getUsersInRoom = (room) =>
   users.filter((user) => user.room === room);
+
+export const closeRoom = (room) => {
+  users = users.filter((user) => user.room !== room); 
+};
