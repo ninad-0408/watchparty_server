@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { serverError } from '../alerts/errors.js';
+import { notAuthorized, notValid, serverError } from '../alerts/errors.js';
 
 import roomModel from '../models/roomModel.js';
 
@@ -43,6 +43,33 @@ export const patchRoom = async (req, res) => {
 };
 
 export const delRoom = async (req, res) => {
+    const { roomId } = req.params;
+
+    roomModel.findById(roomId)
+        .then((data) => {
+            if(data)
+            {
+                if(req.user._id == data.host)
+                {
+                    roomModel.findByIdAndDelete(roomId)
+                        .then(() => {
+                            return res.status(200).json({ message: 'Room deleted successfully.' });
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                            return serverError(res);
+                        });
+                }
+                else
+                return notAuthorized(res);
+            }
+            else
+            return notValid(res);
+        })
+        .catch((error) => {
+            console.log(error);
+            return serverError(res);
+        });
 
 };
 
