@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { notAuthorized, notValid, serverError } from '../alerts/errors.js';
+import { notAuthorized, notValid, serverError,dataUnaccesable } from '../alerts/errors.js';
 
 import roomModel from '../models/roomModel.js';
 
