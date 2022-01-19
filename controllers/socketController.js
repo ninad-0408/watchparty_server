@@ -75,15 +75,23 @@ const handleSocket = (io, socket) => {
 
     socket.on('message', ({ value, roomId }) => {
         const message = value;
-        const user = getUser(socket.user.username,roomId);
-        socket.to(user.room).emit('message', { username: socket.user.username, message })
+        socket.to(roomId).emit('message', { username: socket.user.username, message })
     });
 
-    socket.on('url', ({ roomId, url }) => {
-        socket.to(roomId).emit('url', url);
+    socket.on('url', ({ roomId, val }) => {
+        const user = getUser(socket.user.username, roomId);
+        if(user.isAdmin)
+        io.to(roomId).emit('url', val);
+        else
+        socket.to(socket.id).emit('error', { message: 'You are not admin.' });
+
     });
 
     socket.on('seek', (data) => { 
+        socket.to(data.roomId).emit('seek', data)
+    });
+
+    socket.on('seek-only', (data) => { 
         socket.to(data.roomId).emit('seek', data)
     });
 
