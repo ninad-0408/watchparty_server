@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 
-import { addUser, removeUser, getUser, getUsersInRoom } from "./logic.js";
+import { addUser, removeUser, getUser, getUsersInRoom, closeRoom } from "./logic.js";
 import roomModel from "../models/roomModel.js";
 
 const handleSocket = (io, socket) => {
@@ -19,29 +19,36 @@ const handleSocket = (io, socket) => {
 
                 if(!data.lock || isHost)
                 {
-                    if(data.isPassword && !isHost)
+                    if(data.isPassword && !isHost )
                     {
-                        await bcrypt.compare(password, data.password)
-                            .then(async (check) => {
-                                if(check)
-                                {
-                                    const user = await addUser({  _id: socket.user._id, socketId: socket.id, username: socket.user.username, isAdmin, isHost, room });
-                                    socket.join(user.room);
-                                    const users = getUsersInRoom(user.room);
+                        if(password == '' || password === undefined)
+                        {
+                            socket.to(socket.id).emit('error', { message: 'Wrong password entered!' });
+                        }
+                        else
+                        {
+                            await bcrypt.compare(password, data.password)
+                                .then(async (check) => {
+                                    if(check)
+                                    {
+                                        const user = await addUser({  _id: socket.user._id, socketId: socket.id, username: socket.user.username, isAdmin, isHost, room });
+                                        socket.join(user.room);
+                                        const users = getUsersInRoom(user.room);
                 
-                                    socket.emit('alert',`Welcome ${user.username}`);
-                                    socket.broadcast.to(user.room).emit('alert', `${user.username} has joined!` );
-                                    io.to(user.room).emit('member-connected', users );
-                                }
-                                else
-                                {
-                                    socket.to(socket.id).emit('error', { message: 'Wrong password entered!' });
-                                }
-                            })
-                            .catch((error) => {
-                                console.log(error);
-                                socket.to(socket.id).emit('error', { message: error.message });
-                            });
+                                        socket.emit('alert',`Welcome ${user.username}`);
+                                        socket.broadcast.to(user.room).emit('alert', `${user.username} has joined!` );
+                                        io.to(user.room).emit('member-connected', users );
+                                    }
+                                    else
+                                    {
+                                        socket.to(socket.id).emit('error', { message: 'Wrong password entered!' });
+                                    }
+                                })
+                                .catch((error) => {
+                                    console.log(error);
+                                    socket.to(socket.id).emit('error', { message: error.message });
+                                });
+                        }
                     }
                     else
                     {
@@ -68,15 +75,23 @@ const handleSocket = (io, socket) => {
 
     socket.on('message', ({ value, roomId }) => {
         const message = value;
-        const user = getUser(socket.user.username,roomId);
-        socket.to(user.room).emit('message', { username: socket.user.username, message })
+        socket.to(roomId).emit('message', { username: socket.user.username, message })
     });
 
-    socket.on('url', ({ roomId, url }) => {
-        socket.to(roomId).emit('url', url);
+    socket.on('url', ({ roomId, val }) => {
+        const user = getUser(socket.user.username, roomId);
+        if(user.isAdmin)
+        io.to(roomId).emit('url', val);
+        else
+        socket.to(socket.id).emit('error', { message: 'You are not admin.' });
+
     });
 
     socket.on('seek', (data) => { 
+        socket.to(data.roomId).emit('seek', data)
+    });
+
+    socket.on('seek-only', (data) => { 
         socket.to(data.roomId).emit('seek', data)
     });
 
@@ -102,9 +117,7 @@ const handleSocket = (io, socket) => {
                     io.to(user.room).emit('member-connected', users);
                 }
                 else
-                {
-                    socket.to(socket.id).emit('error', { message: 'You are not host.'});
-                }
+                socket.to(socket.id).emit('error', { message: 'You are not host.'});
             })
             .catch((error) => {
                 console.log(error);
@@ -125,9 +138,7 @@ const handleSocket = (io, socket) => {
                     io.to(user.room).emit('member-connected', users);
                 }
                 else
-                {
-                    socket.to(socket.id).emit('error', { message: 'You are not host.'})
-                }
+                socket.to(socket.id).emit('error', { message: 'You are not host.'});
             })
             .catch((error) => {
                 console.log(error);
@@ -152,9 +163,7 @@ const handleSocket = (io, socket) => {
 
                 }
                 else
-                {
-                    socket.to(socket.id).emit('error', { message: 'You are not host.'})
-                }
+                socket.to(socket.id).emit('error', { message: 'You are not host.'});
             })
             .catch((error) => {
                 console.log(error);
@@ -170,13 +179,39 @@ const handleSocket = (io, socket) => {
                     data.lock = value;
                     await data.save()
                         .then((data) => {
+                            if(value)
                             socket.broadcast.to(roomId).emit('alert', 'Room is locked by host.');
+                            else
+                            socket.broadcast.to(roomId).emit('alert', 'Room is unlocked by host.');
                             io.to(roomId).emit('room-update', data);
                         })
                         .catch((error) => {
                             console.log(error);
                             socket.to(socket.id).emit('error', { message: error.message });
                         });
+                }
+                else
+                socket.to(socket.id).emit('error', { message: "You are not host." });
+            })
+            .catch((error) => {
+                console.log(error);
+                socket.to(socket.id).emit('error', { message: error.message });
+            });
+    });
+
+    socket.on('close-room', (roomId) => {
+        roomModel.findById(roomId)
+            .then((data) => {
+                if(socket.user._id == data.host)
+                {
+                    const users = getUsersInRoom(roomId);
+                    users.map((user) => {
+                        io.sockets.sockets.forEach((soc) => {
+                            if(soc.id === user.socketId)
+                            soc.disconnect();
+                        });
+                    });
+                    closeRoom(roomId);
                 }
                 else
                 socket.to(socket.id).emit('error', { message: "You are not host." });
