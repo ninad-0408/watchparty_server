@@ -88,11 +88,7 @@ const handleSocket = (io, socket) => {
     });
 
     socket.on('seek', (data) => { 
-        socket.to(data.roomId).emit('seek', data)
-    });
-
-    socket.on('seek-only', (data) => { 
-        socket.to(data.roomId).emit('seek', data)
+        io.to(data.roomId).emit('seek', data)
     });
 
     socket.on('disconnect', () => {
