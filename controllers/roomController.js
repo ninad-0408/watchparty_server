@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { notAuthorized, notValid, serverError } from '../alerts/errors.js';
+import { notAuthorized, notValid, serverError,dataUnaccesable } from '../alerts/errors.js';
 
 import roomModel from '../models/roomModel.js';
 
@@ -98,3 +98,14 @@ export const getRoom = async (req, res) => {
 		});
 };
 
+export const myRoom = async (req,res) => {
+    try{
+        const myrooms = await roomModel.find({host:req.user._id},["name"]);
+        res.status(200).json({myrooms});
+    }
+    catch(error)  {
+        return dataUnaccesable(res);
+    };
+    
+
+}

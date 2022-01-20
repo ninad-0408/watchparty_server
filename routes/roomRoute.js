@@ -12,4 +12,5 @@ router.post('/create', isLoggedIn, createRoom);
 router.patch('/:roomId', isValid, isLoggedIn, patchRoom);
 router.delete('/:roomId', isValid, isLoggedIn, delRoom);
 
+
 export default router;
