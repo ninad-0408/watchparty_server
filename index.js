@@ -10,7 +10,7 @@ import { auth, socketAuth } from "./middlewares/auth.js";
 import handleSocket from "./controllers/socketController.js";
 import userRoute from "./routes/userRoute.js";
 import roomRoute from "./routes/roomRoute.js";
-import videoSearch from "./routes/videoSearch.js";
+import videoSearchRoute from "./routes/videoSearchRoute.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -27,9 +27,7 @@ app.use(cors());
 app.use(auth);
 app.use("/user", userRoute);
 app.use("/room", roomRoute);
-app.post("/videoSearch", (req,res)=>{
-    videoSearch(req,res);
-});
+app.post("/videoSearch", videoSearchRoute);
 
 io.use(socketAuth);
 io.on("connection", (socket) => handleSocket(io, socket));
