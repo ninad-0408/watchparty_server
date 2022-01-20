@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { createRoom, patchRoom, delRoom, getRooms,getRoom ,myRoom} from '../controllers/roomController.js';
+import { createRoom, patchRoom, delRoom, getRooms,getRoom } from '../controllers/roomController.js';
 import { isLoggedIn, isValid } from '../middlewares/validity.js';
 
 
@@ -11,6 +11,6 @@ router.get('/:roomId',isLoggedIn, getRoom);
 router.post('/create', isLoggedIn, createRoom);
 router.patch('/:roomId', isValid, isLoggedIn, patchRoom);
 router.delete('/:roomId', isValid, isLoggedIn, delRoom);
-router.get('/myRoom',isLoggedIn,myRoom);
+
 
 export default router;
