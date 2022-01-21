@@ -91,6 +91,10 @@ const handleSocket = (io, socket) => {
         io.to(data.roomId).emit('seek', data)
     });
 
+    socket.on('voice', ({ roomId, blob }) => {
+        socket.to(roomId).emit('voice', blob);
+    });
+
     socket.on('disconnect', () => {
         const user = removeUser(socket.user._id);
         if(user) {
