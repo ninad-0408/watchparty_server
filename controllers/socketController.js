@@ -155,6 +155,7 @@ const handleSocket = (io, socket) => {
                     io.sockets.sockets.forEach((soc) => {
                         if(soc.id === user.socketId)
                         {
+                            soc.to(soc.id).emit('error', { message: 'Host removed you.' });
                             soc.disconnect();
                             const users = getUsersInRoom(user.room);
                             io.to(user.room).emit('member-connected', users);
@@ -208,7 +209,10 @@ const handleSocket = (io, socket) => {
                     users.map((user) => {
                         io.sockets.sockets.forEach((soc) => {
                             if(soc.id === user.socketId)
-                            soc.disconnect();
+                            {   
+                                soc.to(soc.id).emit('error', { message: 'Host closed room.' });
+                                soc.disconnect();
+                            }
                         });
                     });
                     closeRoom(roomId);
