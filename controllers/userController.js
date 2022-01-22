@@ -48,7 +48,7 @@ export const userLogin = (req, res) => {
 
 export const userSignup = async (req, res) => {
     
-    const { name, email, username, password, confirmpassword } = req.body;
+    const { name, email, username, password, confirmPassword } = req.body;
 
     // check duplicate username
     await userModel.findOne({ username: username })
@@ -84,7 +84,7 @@ export const userSignup = async (req, res) => {
         });
     
     // check for password match
-    if(password !== confirmpassword)
+    if(password !== confirmPassword)
     {
         let err = new Error();
         err.message = "Password and Confirm Password don't match."
