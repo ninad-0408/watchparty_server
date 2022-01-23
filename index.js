@@ -10,7 +10,11 @@ import { auth, socketAuth } from "./middlewares/auth.js";
 import handleSocket from "./controllers/socketController.js";
 import userRoute from "./routes/userRoute.js";
 import roomRoute from "./routes/roomRoute.js";
+<<<<<<< HEAD
 import cookieParser from "cookie-parser";
+=======
+import videoSearchRoute from "./routes/videoSearchRoute.js";
+>>>>>>> 94f196b614c1f46333484d6685abd4612c208265
 
 const app = express();
 const server = http.createServer(app);
@@ -28,6 +32,7 @@ app.use(auth);
 
 app.use("/user", userRoute);
 app.use("/room", roomRoute);
+app.post("/videoSearch", videoSearchRoute);
 
 io.use(socketAuth);
 io.on("connection", (socket) => handleSocket(io, socket));
