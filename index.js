@@ -10,6 +10,7 @@ import { auth, socketAuth } from "./middlewares/auth.js";
 import handleSocket from "./controllers/socketController.js";
 import userRoute from "./routes/userRoute.js";
 import roomRoute from "./routes/roomRoute.js";
+import cookieParser from "cookie-parser";
 import videoSearchRoute from "./routes/videoSearchRoute.js";
 
 const app = express();
@@ -22,9 +23,10 @@ const io = new Server(server, {
 
 app.use(express.urlencoded({ limit: "30mb", extended: true }));
 app.use(express.json({ limit: "30mb", extended: true }));
-app.use(cors());
-
+app.use(cors( { origin: "*",credentials:true}));
+app.use(cookieParser(process.env.hashtoken));
 app.use(auth);
+
 app.use("/user", userRoute);
 app.use("/room", roomRoute);
 app.post("/videoSearch", videoSearchRoute);
