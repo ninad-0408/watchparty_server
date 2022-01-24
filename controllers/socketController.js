@@ -88,11 +88,11 @@ const handleSocket = (io, socket) => {
     });
 
     socket.on('seek', (data) => { 
-        socket.to(data.roomId).emit('seek', data)
+        io.to(data.roomId).emit('seek', data)
     });
 
-    socket.on('seek-only', (data) => { 
-        socket.to(data.roomId).emit('seek', data)
+    socket.on('voice', ({ roomId, blob }) => {
+        socket.to(roomId).emit('voice', blob);
     });
 
     socket.on('disconnect', () => {
@@ -155,6 +155,7 @@ const handleSocket = (io, socket) => {
                     io.sockets.sockets.forEach((soc) => {
                         if(soc.id === user.socketId)
                         {
+                            soc.to(soc.id).emit('error', { message: 'Host removed you.' });
                             soc.disconnect();
                             const users = getUsersInRoom(user.room);
                             io.to(user.room).emit('member-connected', users);
@@ -208,7 +209,10 @@ const handleSocket = (io, socket) => {
                     users.map((user) => {
                         io.sockets.sockets.forEach((soc) => {
                             if(soc.id === user.socketId)
-                            soc.disconnect();
+                            {   
+                                soc.to(soc.id).emit('error', { message: 'Host closed room.' });
+                                soc.disconnect();
+                            }
                         });
                     });
                     closeRoom(roomId);
