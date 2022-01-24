@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 
-import { addUser, removeUser, getUser, getUsersInRoom, closeRoom } from "./logic.js";
+import { addUser, removeUser, getUser, getUsersInRoom, closeRoom,checkUser } from "./logic.js";
 import roomModel from "../models/roomModel.js";
 
 const handleSocket = (io, socket) => {
@@ -31,13 +31,24 @@ const handleSocket = (io, socket) => {
                                 .then(async (check) => {
                                     if(check)
                                     {
-                                        const user = await addUser({  _id: socket.user._id, socketId: socket.id, username: socket.user.username, isAdmin, isHost, room });
-                                        socket.join(user.room);
-                                        const users = getUsersInRoom(user.room);
-                
-                                        socket.emit('alert',`Welcome ${user.username}`);
-                                        socket.broadcast.to(user.room).emit('alert', `${user.username} has joined!` );
-                                        io.to(user.room).emit('member-connected', users );
+                                        const checkUr = checkUser(socket.user._id);
+                                        console.log(checkUr);
+                                        if(checkUr)
+                                        {
+                                            socket.to(socket.id).emit('error', { message: 'You are Joined in some other room' });
+                                        }
+                                        else
+                                        {
+                                            const user = await addUser({  _id: socket.user._id, socketId: socket.id, username: socket.user.username, isAdmin, isHost, room });
+                                            socket.join(user.room);
+                                            const users = getUsersInRoom(user.room);
+                    
+                                            socket.emit('alert',`Welcome ${user.username}`);
+                                            socket.broadcast.to(user.room).emit('alert', `${user.username} has joined!` );
+                                            io.to(user.room).emit('member-connected', users );
+                                            
+                                        }
+                                       
                                     }
                                     else
                                     {
@@ -52,13 +63,23 @@ const handleSocket = (io, socket) => {
                     }
                     else
                     {
-                        const user = await addUser({  _id: socket.user._id, socketId: socket.id, username: socket.user.username, isAdmin, isHost, room });
-                        socket.join(user.room);
-                        const users = getUsersInRoom(user.room);
-                
-                        socket.emit('alert',`Welcome ${user.username}`);
-                        socket.broadcast.to(user.room).emit('alert', `${user.username} has joined!` );
-                        io.to(user.room).emit('member-connected', users );
+                        const checkUr = checkUser(socket.user._id);
+                        console.log(checkUr);
+                        if(checkUr)
+                        {
+                            socket.to(socket.id).emit('error', { message: 'You are Joined in some other room' });
+                        }
+                        else
+                        {
+                            const user = await addUser({  _id: socket.user._id, socketId: socket.id, username: socket.user.username, isAdmin, isHost, room });
+                            socket.join(user.room);
+                            const users = getUsersInRoom(user.room);
+                    
+                            socket.emit('alert',`Welcome ${user.username}`);
+                            socket.broadcast.to(user.room).emit('alert', `${user.username} has joined!` );
+                            io.to(user.room).emit('member-connected', users );
+                        }
+                       
                     }                    
                 }
                 else
