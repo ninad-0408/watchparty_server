@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import { auth, socketAuth } from "./middlewares/auth.js";
+import { errorHandler } from "./middlewares/errorHandler.js";
 import handleSocket from "./controllers/socketController.js";
 import userRoute from "./routes/userRoute.js";
 import roomRoute from "./routes/roomRoute.js";
@@ -30,6 +31,7 @@ app.use(auth);
 app.use("/user", userRoute);
 app.use("/room", roomRoute);
 app.post("/videoSearch", videoSearchRoute);
+app.use(( err, req, res, next) => errorHandler);
 
 io.use(socketAuth);
 io.on("connection", (socket) => handleSocket(io, socket));
