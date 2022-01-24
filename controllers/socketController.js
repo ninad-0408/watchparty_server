@@ -23,7 +23,7 @@ const handleSocket = (io, socket) => {
                     {
                         if(password == '' || password === undefined)
                         {
-                            socket.to(socket.id).emit('error', { message: 'Wrong password entered!' });
+                            io.to(socket.id).emit('error', { message: 'Wrong password entered!' });
                         }
                         else
                         {
@@ -41,12 +41,12 @@ const handleSocket = (io, socket) => {
                                     }
                                     else
                                     {
-                                        socket.to(socket.id).emit('error', { message: 'Wrong password entered!' });
+                                        io.to(socket.id).emit('error', { message: 'Wrong password entered!' });
                                     }
                                 })
                                 .catch((error) => {
                                     console.log(error);
-                                    socket.to(socket.id).emit('error', { message: error.message });
+                                    io.to(socket.id).emit('error', { message: error.message });
                                 });
                         }
                     }
@@ -63,12 +63,12 @@ const handleSocket = (io, socket) => {
                 }
                 else
                 {
-                    socket.to(socket.id).emit('error', { message: 'The room is locked by Host.'});
+                    io.to(socket.id).emit('error', { message: 'The room is locked by Host.'});
                 }
             })
             .catch((error) => {
                 console.log(error);
-                socket.to(socket.id).emit('error', { message: error.message });
+                io.to(socket.id).emit('error', { message: error.message });
             });
         
     });
@@ -83,7 +83,7 @@ const handleSocket = (io, socket) => {
         if(user.isAdmin)
         io.to(roomId).emit('url', val);
         else
-        socket.to(socket.id).emit('error', { message: 'You are not admin.' });
+        io.to(socket.id).emit('error', { message: 'You are not admin.' });
 
     });
 
@@ -117,11 +117,11 @@ const handleSocket = (io, socket) => {
                     io.to(user.room).emit('member-connected', users);
                 }
                 else
-                socket.to(socket.id).emit('error', { message: 'You are not host.'});
+                io.to(socket.id).emit('error', { message: 'You are not host.'});
             })
             .catch((error) => {
                 console.log(error);
-                socket.to(socket.id).emit('error', { message: error.message });
+                io.to(socket.id).emit('error', { message: error.message });
             });
     });
 
@@ -138,11 +138,11 @@ const handleSocket = (io, socket) => {
                     io.to(user.room).emit('member-connected', users);
                 }
                 else
-                socket.to(socket.id).emit('error', { message: 'You are not host.'});
+                io.to(socket.id).emit('error', { message: 'You are not host.'});
             })
             .catch((error) => {
                 console.log(error);
-                socket.to(socket.id).emit('error', { message: error.message });
+                io.to(socket.id).emit('error', { message: error.message });
             });
     });
 
@@ -155,7 +155,7 @@ const handleSocket = (io, socket) => {
                     io.sockets.sockets.forEach((soc) => {
                         if(soc.id === user.socketId)
                         {
-                            soc.to(soc.id).emit('error', { message: 'Host removed you.' });
+                            io.to(soc.id).emit('error', { message: 'Host removed you.' });
                             soc.disconnect();
                             const users = getUsersInRoom(user.room);
                             io.to(user.room).emit('member-connected', users);
@@ -164,11 +164,11 @@ const handleSocket = (io, socket) => {
 
                 }
                 else
-                socket.to(socket.id).emit('error', { message: 'You are not host.'});
+                io.to(socket.id).emit('error', { message: 'You are not host.'});
             })
             .catch((error) => {
                 console.log(error);
-                socket.to(socket.id).emit('error', { message: error.message });
+                io.to(socket.id).emit('error', { message: error.message });
             });
     });
 
@@ -188,15 +188,15 @@ const handleSocket = (io, socket) => {
                         })
                         .catch((error) => {
                             console.log(error);
-                            socket.to(socket.id).emit('error', { message: error.message });
+                            io.to(socket.id).emit('error', { message: error.message });
                         });
                 }
                 else
-                socket.to(socket.id).emit('error', { message: "You are not host." });
+                io.to(socket.id).emit('error', { message: "You are not host." });
             })
             .catch((error) => {
                 console.log(error);
-                socket.to(socket.id).emit('error', { message: error.message });
+                io.to(socket.id).emit('error', { message: error.message });
             });
     });
 
@@ -210,7 +210,7 @@ const handleSocket = (io, socket) => {
                         io.sockets.sockets.forEach((soc) => {
                             if(soc.id === user.socketId)
                             {   
-                                soc.to(soc.id).emit('error', { message: 'Host closed room.' });
+                                io.to(soc.id).emit('error', { message: 'Host closed room.' });
                                 soc.disconnect();
                             }
                         });
@@ -218,11 +218,11 @@ const handleSocket = (io, socket) => {
                     closeRoom(roomId);
                 }
                 else
-                socket.to(socket.id).emit('error', { message: "You are not host." });
+                io.to(socket.id).emit('error', { message: "You are not host." });
             })
             .catch((error) => {
                 console.log(error);
-                socket.to(socket.id).emit('error', { message: error.message });
+                io.to(socket.id).emit('error', { message: error.message });
             });
     });
 

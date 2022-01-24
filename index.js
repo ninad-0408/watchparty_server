@@ -31,7 +31,7 @@ app.use(auth);
 app.use("/user", userRoute);
 app.use("/room", roomRoute);
 app.post("/videoSearch", videoSearchRoute);
-app.use(errorHandler);
+app.use(( err, req, res, next) => errorHandler);
 
 io.use(socketAuth);
 io.on("connection", (socket) => handleSocket(io, socket));
