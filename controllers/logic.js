@@ -28,5 +28,7 @@ export const getUsersInRoom = (room) =>
   users.filter((user) => user.room === room);
 
 export const closeRoom = (room) => {
-  users = users.filter((user) => user.room !== room); 
+  users = users.filter((user) => user.room !== room);
 };
+export const checkUser = (id) =>
+  users.find((checkUr) => checkUr._id == id);
