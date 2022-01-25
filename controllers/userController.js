@@ -8,7 +8,6 @@ import { dataUnaccesable, serverError, wrongPassword } from '../alerts/errors.js
 
 const options = {
     expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-    secure: process.env.NODE_ENV === "prodution" ? true : false,
     sameSite: None,
     httpOnly: false
   };
