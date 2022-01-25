@@ -43,6 +43,7 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Headers",
     "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept"
   );
+  console.log("headersset", res);
   next();
 });
 

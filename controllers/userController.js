@@ -8,6 +8,7 @@ import { dataUnaccesable, serverError, wrongPassword } from '../alerts/errors.js
 
 export const userLogin = (req, res) => {
 
+    console.log('hereislogin', req);
     const { username, password } = req.body;
 
     // check for user exsistance and token sign
