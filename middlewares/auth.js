@@ -4,7 +4,7 @@ dotenv.config();
 
 export const auth = (req, res, next) => {
 
-    const token = req.headers.authorization?.split(' ')[1];
+    const token = req.cookies.token;
 
     if(token)
     req.user = jwt.verify(token, process.env.hashtoken);
