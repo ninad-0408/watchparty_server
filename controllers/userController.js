@@ -6,12 +6,6 @@ dotenv.config();
 import userModel from '../models/userModel.js'
 import { dataUnaccesable, serverError, wrongPassword } from '../alerts/errors.js';
 
-const options = {
-    expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-    secure: process.env.NODE_ENV === "prodution" ? true : false,
-    httpOnly: false
-  };
-
 export const userLogin = (req, res) => {
 
     const { username, password } = req.body;
@@ -27,10 +21,7 @@ export const userLogin = (req, res) => {
                         {
                             const token = jwt.sign({ email: data.email, _id: data._id, username: data.username }, process.env.hashtoken);
                          
-                            res.cookie("token", token, options);
-                            res.cookie("username", `${data.username}`, options);
-                            res.cookie("_id", `${data._id}`, options);
-                            return res.status(200).json({ message: "You are logged in successfully." });
+                            return res.status(200).json({ token, username: data.username, _id: data._id, message: "You are logged in successfully." });
                         }
                         else
                         return wrongPassword(res);
@@ -108,13 +99,9 @@ export const userSignup = async (req, res) => {
         .then((hash) => {
             userModel.create({ name, email, username, password: hash })
                 .then((data) => {
-                    console.log(data);
                     const token = jwt.sign({ email: data.email, _id: data._id, username: data.username }, process.env.hashtoken);
                     
-                    res.cookie("token", token, options);
-                    res.cookie("username", `${data.username}`, options);
-                    res.cookie("_id", `${data._id}`, options);
-                    return res.status(200).json({ message: "You are signuped successfully." });
+                    return res.status(200).json({ token, username: data.username, _id: data._id, message: "You are signuped successfully." });
                 })
                 .catch((error) => {
                     console.log(error);
