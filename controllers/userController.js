@@ -5,11 +5,11 @@ dotenv.config();
 
 import userModel from '../models/userModel.js'
 import { dataUnaccesable, serverError, wrongPassword } from '../alerts/errors.js';
-// const NODE_ENV = ;
+
 const options = {
     expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
     secure: process.env.NODE_ENV === "prodution" ? true : false,
-    httpOnly: false,
+    httpOnly: false
   };
 
 export const userLogin = (req, res) => {
@@ -27,8 +27,10 @@ export const userLogin = (req, res) => {
                         {
                             const token = jwt.sign({ email: data.email, _id: data._id, username: data.username }, process.env.hashtoken);
                          
-                              res.cookie("JWT", token, options);
-                            return res.status(200).json({ user: { name: data.name, email: data.email, _id: data._id, username: data.username }, token, message: "You are logged in successfully." });
+                            res.cookie("token", token, options);
+                            res.cookie("username", `${data.username}`, options);
+                            res.cookie("_id", `${data._id}`, options);
+                            return res.status(200).json({ message: "You are logged in successfully." });
                         }
                         else
                         return wrongPassword(res);
@@ -108,8 +110,11 @@ export const userSignup = async (req, res) => {
                 .then((data) => {
                     console.log(data);
                     const token = jwt.sign({ email: data.email, _id: data._id, username: data.username }, process.env.hashtoken);
-                      res.cookie("cookie", token, options);
-                    return res.status(200).json({ user: { name: data.name, email: data.email, _id: data._id, username: data.username }, token, message: "You are signuped successfully." });
+                    
+                    res.cookie("token", token, options);
+                    res.cookie("username", `${data.username}`, options);
+                    res.cookie("_id", `${data._id}`, options);
+                    return res.status(200).json({ message: "You are signuped successfully." });
                 })
                 .catch((error) => {
                     console.log(error);
