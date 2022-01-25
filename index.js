@@ -11,11 +11,9 @@ import { errorHandler } from "./middlewares/errorHandler.js";
 import handleSocket from "./controllers/socketController.js";
 import userRoute from "./routes/userRoute.js";
 import roomRoute from "./routes/roomRoute.js";
-import cookieParser from "cookie-parser";
 import videoSearchRoute from "./routes/videoSearchRoute.js";
 
 const app = express();
-app.use(cookieParser());
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -31,20 +29,6 @@ app.use(
     credentials: true,
   })
 );
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Credentials", true);
-  res.header("Access-Control-Allow-Origin", req.headers.origin);
-  res.header(
-    "Access-Control-Allow-Methods",
-    "GET,PUT,POST,DELETE,UPDATE,OPTIONS"
-  );
-  res.header(
-    "Access-Control-Allow-Headers",
-    "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept"
-  );
-  console.log("headersset", res);
-  next();
-});
 
 app.use(auth);
 app.use("/user", userRoute);
