@@ -115,15 +115,3 @@ export const userSignup = async (req, res) => {
         });    
 
 };
-
-export const getUsers = (req, res) => {
-
-    userModel.find({}, ['username', '_id'])
-        .then((data) => {
-            return res.status(200).json({ users: data });
-        })
-        .catch((error) => {
-            console.log(error);
-            return dataUnaccesable(res);
-        })
-}

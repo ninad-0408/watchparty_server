@@ -31,7 +31,6 @@ app.use(
     credentials: true,
   })
 );
-app.use(auth);
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Credentials", true);
   res.header("Access-Control-Allow-Origin", req.headers.origin);
@@ -47,6 +46,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(auth);
 app.use("/user", userRoute);
 app.use("/room", roomRoute);
 app.post("/videoSearch", videoSearchRoute);
