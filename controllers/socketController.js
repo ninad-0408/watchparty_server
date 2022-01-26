@@ -32,7 +32,6 @@ const handleSocket = (io, socket) => {
                                     if(check)
                                     {
                                         const checkUr = checkUser(socket.user._id);
-                                        console.log(checkUr);
                                         if(checkUr)
                                         {
                                             socket.to(socket.id).emit('error', { message: 'You are Joined in some other room' });
@@ -64,10 +63,9 @@ const handleSocket = (io, socket) => {
                     else
                     {
                         const checkUr = checkUser(socket.user._id);
-                        console.log(checkUr);
                         if(checkUr)
                         {
-                            socket.to(socket.id).emit('error', { message: 'You are Joined in some other room' });
+                            io.to(socket.id).emit('error', { message: 'You are Joined in some other room' });
                         }
                         else
                         {
@@ -97,6 +95,14 @@ const handleSocket = (io, socket) => {
     socket.on('message', ({ value, roomId }) => {
         const message = value;
         socket.to(roomId).emit('message', { username: socket.user.username, message })
+    });
+
+    socket.on('request-sync', (socketId) => {
+        io.to(socketId).emit('request-sync');
+    });
+
+    socket.on('play-pause', ({ playing, roomId }) => {
+        io.to(roomId).emit('play-pause', playing);
     });
 
     socket.on('url', ({ roomId, val }) => {

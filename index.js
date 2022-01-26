@@ -11,16 +11,9 @@ import { errorHandler } from "./middlewares/errorHandler.js";
 import handleSocket from "./controllers/socketController.js";
 import userRoute from "./routes/userRoute.js";
 import roomRoute from "./routes/roomRoute.js";
-import cookieParser from "cookie-parser";
 import videoSearchRoute from "./routes/videoSearchRoute.js";
 
 const app = express();
-app.all("/", (req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  next();
-});
-app.use(cookieParser());
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -32,12 +25,12 @@ app.use(express.json({ limit: "30mb", extended: true }));
 app.use(express.urlencoded({ limit: "30mb", extended: true }));
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://watch-party-project.web.app"],
+    origin: true,
     credentials: true,
   })
 );
-app.use(auth);
 
+app.use(auth);
 app.use("/user", userRoute);
 app.use("/room", roomRoute);
 app.post("/videoSearch", videoSearchRoute);
