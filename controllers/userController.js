@@ -140,67 +140,67 @@ export const getUsers = (req, res) => {
 export const forgetpassword = async (req, res) => {
   const { username, email } = req.body;
   try {
-    await userModel.findOne({ email:email, username:username }).then((user) => {
-      if (!user) {
-        res.status(404).json({ error: "User not found with this Email" });
-      } else {
-        const token = jwt.sign(
-          { _id: user._id, resetpassword: true },
-          process.env.hashtoken
-        );
+    await userModel
+      .findOne({ email: email, username: username })
+      .then((user) => {
+        if (!user) {
+          res.status(404).json({ error: "User not found with this Email" });
+        } else {
+          const token = jwt.sign(
+            { _id: user._id, resetpassword: true },
+            process.env.hashtoken
+          );
 
-        const reset_link = `https://watch-party-project.web.app/resetpassword/${token}`;
-        var mailOptions = {
-          from: {name:"WatchParty: Password Recovery",address:process.env.EMAIL},
-          to: user.email,
-          subject: `Reset Password`,
-          text: `Your reset password link is ${reset_link}`,
-        };
-        const test=async()=>{
+          const reset_link = `https://watch-party-project.web.app/resetpassword/${token}`;
+          var mailOptions = {
+            from: {
+              name: "WatchParty: Password Recovery",
+              address: process.env.EMAIL,
+            },
+            to: user.email,
+            subject: `Reset Password`,
+            text: `Your reset password link is ${reset_link}`,
+          };
+          const test = async () => {
             await sendMessage(mailOptions);
+          };
+          test();
+          return res.status(200).json({
+            message: "Link is Active for 10 mins",
+          });
         }
-        test();
-        return res.status(200).json({
-          message: "Link is Active for 10 mins",
-        });
-      }
-    });
+      });
   } catch (error) {
     return dataUnaccesable(res);
   }
 };
 
-export const resetpassword =async(req,res)=>{
-    const {password,confirmPassword}=req.body;
-    const {token}=req.params;
-    const user=jwt.verify(token, process.env.hashtoken);
-    // console.log(user);
-    if (password !== confirmPassword) {
-        let err = new Error();
-        err.message = "Password and Confirm Password don't match.";
-        err.status = 403;
-        return res.status(err.status).json({ err });
-      }
-      var current_time = Date.now().valueOf() / 1000;
-      // console.log(current_time);
-      if ((current_time-user.iat)/60 >10)
-      {
-        let err = new Error();
-        err.message = "Token has expired ";
-        err.status = 401;
-        return res.status(err.status).json({ err });
-      }
-    try{
-        await bcrypt
-        .hash(password, 4)
-        .then(async(hash) => {
-            await userModel.findByIdAndUpdate({_id:user._id},{ password:hash  });
-        })
-      
-        res.status(200).json({message:"Password successfully updated"});
-    }
-    catch(error){
-        return dataUnaccesable(res);
-    }
+export const resetpassword = async (req, res) => {
+  const { password, confirmPassword } = req.body;
+  const { token } = req.params;
+  const user = jwt.verify(token, process.env.hashtoken);
+  // console.log(user);
+  if (password !== confirmPassword) {
+    let err = new Error();
+    err.message = "Password and Confirm Password don't match.";
+    err.status = 403;
+    return res.status(err.status).json({ err });
+  }
+  var current_time = Date.now().valueOf() / 1000;
+  // console.log(current_time);
+  if ((current_time - user.iat) / 60 > 10) {
+    let err = new Error();
+    err.message = "Token has expired ";
+    err.status = 401;
+    return res.status(err.status).json({ err });
+  }
+  try {
+    await bcrypt.hash(password, 4).then(async (hash) => {
+      await userModel.findByIdAndUpdate({ _id: user._id }, { password: hash });
+    });
 
-}
+    res.status(200).json({ message: "Password successfully updated" });
+  } catch (error) {
+    return dataUnaccesable(res);
+  }
+};
