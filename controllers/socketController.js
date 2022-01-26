@@ -92,9 +92,9 @@ const handleSocket = (io, socket) => {
         
     });
 
-    socket.on('message', ({ value, roomId }) => {
+    socket.on('message', ({ value, date, roomId }) => {
         const message = value;
-        socket.to(roomId).emit('message', { username: socket.user.username, message })
+        socket.to(roomId).emit('message', { username: socket.user.username, message, date })
     });
 
     socket.on('request-sync', (socketId) => {
