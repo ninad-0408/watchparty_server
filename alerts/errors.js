@@ -1,5 +1,4 @@
 export const notLoggedIn = (res) => {
-    console.log('errornotloggedin', res);
     var err = new Error();
     err.message = "You are not logged in.";
     err.status = 403;
