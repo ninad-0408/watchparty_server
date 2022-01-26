@@ -46,3 +46,9 @@ export const wrongPassword = (res) => {
     err.status = 403;
     return res.status(err.status).json({ err });
 }
+export const emailNotSent = (res) => {
+    var err = new Error();
+    err.message = "Unable to send mail rightnow. Try again later.";
+    err.status = 503;
+    return res.status(200).json({ err });
+};
