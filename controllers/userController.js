@@ -144,7 +144,10 @@ export const forgetpassword = async (req, res) => {
       .findOne({ email: email, username: username })
       .then((user) => {
         if (!user) {
-          res.status(404).json({ error: "User not found with this Email" });
+          let err = new Error();
+          err.message = "User not found with this Email";
+          err.status = 404;
+          return res.status(err.status).json({ err });
         } else {
           const token = jwt.sign(
             { _id: user._id, resetpassword: true },
