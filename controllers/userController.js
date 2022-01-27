@@ -204,3 +204,31 @@ export const resetpassword = async (req, res) => {
     return dataUnaccesable(res);
   }
 };
+
+
+export const changePassword = async (req, res) => {
+  const userId = req.user._id;
+  const { currentPassword,password, confirmPassword } = req.body;
+  if(currentPassword==password)
+  {
+    let err = new Error();
+    err.message = "Enter a new password";
+    err.status = 403;
+    return res.status(err.status).json({ err });
+  }
+  if (password !== confirmPassword) {
+    let err = new Error();
+    err.message = "Password and Confirm Password don't match.";
+    err.status = 403;
+    return res.status(err.status).json({ err });
+  }
+  try {
+    await bcrypt.hash(password, 4).then(async (hash) => {
+      await userModel.findByIdAndUpdate({ _id: userId }, { password: hash });
+    });
+
+    res.status(200).json({ message: "Password successfully updated" });
+  } catch (error) {
+    return dataUnaccesable(res);
+  }
+};
