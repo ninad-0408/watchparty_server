@@ -205,12 +205,10 @@ export const resetpassword = async (req, res) => {
   }
 };
 
-
 export const changePassword = async (req, res) => {
   const userId = req.user._id;
-  const { currentPassword,password, confirmPassword } = req.body;
-  if(currentPassword==password)
-  {
+  const { currentPassword, password, confirmPassword } = req.body;
+  if (currentPassword == password) {
     let err = new Error();
     err.message = "Enter a new password";
     err.status = 403;
