@@ -1,5 +1,5 @@
 import express from 'express';
-import { userLogin, userSignup, getUsers, forgetpassword, resetpassword } from '../controllers/userController.js';
+import { userLogin, userSignup, getUsers, forgetpassword, resetpassword,changePassword } from '../controllers/userController.js';
 import { isLoggedIn } from '../middlewares/validity.js';
 import { myRoom } from '../controllers/roomController.js';
 
@@ -10,5 +10,6 @@ router.post('/signup', userSignup);
 router.get('/myRoom',isLoggedIn,myRoom);
 router.post('/forgetpassword',forgetpassword);
 router.post('/resetpassword/:token',resetpassword)
+router.post('/changepassword',isLoggedIn,changePassword);
 
 export default router;
