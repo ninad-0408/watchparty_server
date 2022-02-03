@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import { Err } from '../helpers/errorHandler.js';
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -16,10 +17,16 @@ export const socketAuth = (socket, next) => {
 
     const token = socket.handshake.headers.authorization?.split(' ')[1];
 
-    if(token)
-    {
+    try {
+        if(token)
         socket.user = jwt.verify(token, process.env.hashtoken);
+        else
+        throw new Err("You are not loggedIn.", 403);
         next();
-    }
+        
+    } catch (err) {
+        next(err);
+    };
+
 
 };

@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import { auth, socketAuth } from "./middlewares/auth.js";
-import { errorHandler } from "./middlewares/errorHandler.js";
+import { errorHandler } from "./helpers/errorHandler.js";
 import handleSocket from "./controllers/socketController.js";
 import userRoute from "./routes/userRoute.js";
 import roomRoute from "./routes/roomRoute.js";
