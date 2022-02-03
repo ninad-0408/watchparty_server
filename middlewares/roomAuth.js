@@ -1,6 +1,6 @@
 import roomModel from '../models/roomModel.js';
+import { Err } from '../helpers/errorHandler.js';
 import bcrypt from 'bcryptjs';
-import { serverError, wrongPassword } from '../alerts/errors.js';
 
 const roomAuth = async (req, res, next) => {
 
@@ -18,28 +18,24 @@ const roomAuth = async (req, res, next) => {
                         if(check)
                         next();
                         else
-                        return wrongPassword(res);
+                        throw new Err("Wrong Password Entered.", 403)
                     })
-                    .catch((error) => {
-                        console.log(error);
-                        return serverError(res);
-                    })
+                    .catch((err) => {
+                        next(err);
+                    });
 
             }
             else
             {
                 if(room.allowedUsers.indexOf(req.user.username) === -1)
-                {
-                    let err = new Error();
-                    err.message = 'You are not allowed to join this room contact host.';
-                    err.status = 401;
-                    return res.status(err.status).json({ err });
-                }
+                throw new Err('You are not allowed to join this room contact host.', 401);
                 else
                 next();
             }
         })
-
-}
+        .catch((err) => {
+            next(err);
+        });
+};
 
 export default roomAuth;

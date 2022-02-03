@@ -1,39 +1,34 @@
 import bcrypt from 'bcryptjs';
-import { notAuthorized, notValid, serverError,dataUnaccesable } from '../alerts/errors.js';
-
+import { Err } from '../helpers/errorHandler.js';
 import roomModel from '../models/roomModel.js';
 
-export const createRoom = async (req, res) => {
+export const createRoom = (req, res, next) => {
     
     var body = req.body;
     body.host = req.user._id;
-    // console.log(body);
+    
     // check if password is enabled
     if(body.password)
     {
         body.isPassword = true;
         body.open = false;
-        await bcrypt.hash(body.password, 4)
-            .then((data) => {
-                body.password = data;
-            })
-            .catch((error) => {
-                console.log(error);
-                return serverError(res);
-            });
     }
-
-	// creating room
-	await roomModel.create(body)
-		.then((data) => {
-			delete data.password;
-            return res.status(200).json({ room: data, message: "Room is created successfully." });
-        })
-        .catch((error) => {
-            console.log(error);
-            return serverError(res);
+    
+    bcrypt.hash(body.password, 4)
+        .then((data) => {
+            body.password = data;
+            roomModel.create(body)
+		        .then((room) => {
+			        delete room.password;
+                    return res.status(200).json({ room, message: "Room is created successfully." });
+                })
+                .catch((err) => {
+                    next(err);
+                });
+            })
+        .catch((err) => {
+            next(err);
         });
-
 };
 
 export const patchRoom = async (req, res) => {
@@ -42,7 +37,7 @@ export const patchRoom = async (req, res) => {
 
 };
 
-export const delRoom = async (req, res) => {
+export const delRoom = (req, res, next) => {
     const { roomId } = req.params;
 
     roomModel.findById(roomId)
@@ -55,57 +50,49 @@ export const delRoom = async (req, res) => {
                         .then(() => {
                             return res.status(200).json({ message: 'Room deleted successfully.' });
                         })
-                        .catch((error) => {
-                            console.log(error);
-                            return serverError(res);
+                        .catch((err) => {
+                            next(err);
                         });
                 }
                 else
-                return notAuthorized(res);
+                throw new Err("You are not authorized.", 401);
             }
             else
-            return notValid(res);
+            throw new Err('You request is not valid.', 400);
         })
-        .catch((error) => {
-            console.log(error);
-            return serverError(res);
+        .catch((err) => {
+            next(err);
         });
 
 };
 
-export const getRooms = async (req, res) => {
+export const getRooms = (req, res, next) => {
 
 	roomModel.find({ open: true }, ["name", "host"])
 		.populate("host", "username")
 		.then((data) => {
 			return res.status(200).json({ rooms: data });
 		})
-		.catch((error) => {
-			console.log(error);
-			return dataUnaccesable(res);
+		.catch((err) => {
+            next(err);
 		});
 };
 
-export const getRoom = async (req, res) => {
+export const getRoom = (req, res, next) => {
     const { roomId } = req.params;
+
 	roomModel.findById(roomId, ["name", "host", "isPassword", 'open', 'lock'])
 		.then((data) => {
 			return res.status(200).json({ room: data });
 		})
-		.catch((error) => {
-			console.log(error);
-			return dataUnaccesable(res);
+		.catch((err) => {
+			next(err);
 		});
 };
 
-export const myRoom = async (req,res) => {
-    try{
-        const myrooms = await roomModel.find({host:req.user._id},["name"]);
-        res.status(200).json({ myrooms });
-    }
-    catch(error)  {
-        return dataUnaccesable(res);
-    };
+export const myRoom = (req,res, next) => {
     
-
-}
+    roomModel.find({ host: req.user._id },["name"])
+        .then((myrooms) => res.status(200).json({ myrooms }))
+        .catch((err) => next(err));         
+};

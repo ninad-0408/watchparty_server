@@ -1,6 +1,5 @@
 import bcrypt from 'bcryptjs';
-
-import { addUser, removeUser, getUser, getUsersInRoom, closeRoom,checkUser } from "./logic.js";
+import { addUser, removeUser, getUser, getUsersInRoom, closeRoom, checkUser } from "./logic.js";
 import roomModel from "../models/roomModel.js";
 
 const handleSocket = (io, socket) => {

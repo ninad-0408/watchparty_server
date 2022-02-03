@@ -1,11 +1,16 @@
 import mongoose from "mongoose";
-import { notLoggedIn, notValid } from "../alerts/errors.js";
+import { Err } from '../helpers/errorHandler.js';
 
 export const isLoggedIn = (req, res, next) => {
-    if(req.user)
-    return next();
-    else
-    return notLoggedIn(res);
+    try {
+        if(req.user)
+        next();
+        else
+        throw new Err('You are not logged in.', 403);
+        
+    } catch (err) {
+        next(err);
+    };    
 
 };
 
@@ -13,8 +18,12 @@ export const isValid = (req, res, next) => {
 
     const { roomId } = req.params;
 
-    if(!mongoose.Types.ObjectId.isValid(roomId))
-    return notValid(res);
-    else
-    next();
+    try {
+        if(!mongoose.Types.ObjectId.isValid(roomId))
+        throw new Err('Your request is not valid.', 400);
+        else
+        next();  
+    } catch (err) {
+        next(err);
+    };
 };

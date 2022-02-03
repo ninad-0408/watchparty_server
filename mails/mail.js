@@ -4,8 +4,6 @@ const OAuth2 = google.auth.OAuth2;
 import dotenv from "dotenv";
 dotenv.config();
 
-import { emailNotSent } from "../alerts/errors.js";
-
 const createTransporter = async () => {
     const oauth2Client = new OAuth2(
         process.env.CLIENT_ID2,
