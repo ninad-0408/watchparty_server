@@ -67,6 +67,18 @@
   - **Change video url**
   - **Control video** playback
 
+- **Home Page View**
+<img src="https://www.linkpicture.com/q/Homepage.jpeg" type="image">
+
+- **Room Page View with Youtube Search**
+<img src="https://www.linkpicture.com/q/yputubesearch.jpeg" type="image">
+
+- **Room Page View with settings**
+<img src="https://www.linkpicture.com/q/settings.jpeg" type="image">
+
+- **Performance Of Website**
+<img src="https://www.linkpicture.com/q/performance.jpeg" type="image">
+
 ## Tech stack and concepts used
 - #### **Backend**
   - Nodejs
