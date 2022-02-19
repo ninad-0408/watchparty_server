@@ -89,7 +89,7 @@
     <img title="Nodejs" src="https://img.icons8.com/color/50/000000/nodejs.png"/>
     <img title="Expressjs" src="https://avatars.githubusercontent.com/u/5658226?s=40"/>
     <img title="MongoDB Atlas" src="https://img.icons8.com/color/40/000000/mongodb.png"/>
-    <img title="Socket.io" height='40px' src="https://socket.io/images/logo-dark.svg"/>
+     <img title="Socket.io" src="https://avatars.githubusercontent.com/u/10566080?s=40&v=4"/>
     <img title="Heroku deployment" src="https://img.icons8.com/color/40/000000/heroku.png"/>
 - #### **Frontend**
   - React.js
@@ -99,7 +99,7 @@
   - Firebase Deployment  
     <img title="Reactjs" src="https://img.icons8.com/color/40/000000/react-native.png"/>
     <img title="Material-UI" src="https://img.icons8.com/color/40/000000/material-ui.png"/>
-    <img title="Socket.io Client" height='40px' src="https://socket.io/images/logo-dark.svg"/>
+    <img title="Socket.io Client" src="https://avatars.githubusercontent.com/u/10566080?s=40&v=4"/>
     <img title="Firebase Deployment" src="https://img.icons8.com/color/40/000000/firebase.png"/>
     <img title="Javascript" src="https://img.icons8.com/color/40/000000/javascript.png"/>
     <img title="HTML 5" src="https://img.icons8.com/color/40/000000/html-5--v1.png"/>
