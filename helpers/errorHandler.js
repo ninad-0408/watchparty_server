@@ -1,5 +1,7 @@
+import { logErr } from "./debugger.js";
+
 export const errorHandler = (err, req, res, next) => {
-    console.log(err);
+    logErr(err);
     return res.status(err.status).json({ err });
 };
 

@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "nodemon index.js",
+    "test": "nodemon -r dotenv/config index.js",
     "start": "node index.js"
   },
   "author": "Ninad Kalanke, Akshat Gupta, Jay Raikhere",
@@ -13,6 +13,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
+    "debug": "^4.3.3",
     "dotenv": "^10.0.0",
     "express": "^4.17.2",
     "googleapis": "^92.0.0",
