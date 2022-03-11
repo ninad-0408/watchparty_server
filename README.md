@@ -1,4 +1,4 @@
-<h1 style="display: flex; align-items: center"> <img alt="Website Logo" src="https://www.linkpicture.com/q/favicon_20.png" height="30px" width="40px" style="margin: 2px"/> Watch Party <img src="https://media1.giphy.com/media/2irERnrC80bV4breHc/giphy.gif" width="120" height="80" style="margin: 10px" /></h1>
+<h1 style="display: flex; align-items: center"> <img alt="Website Logo" src="https://i.ibb.co/7pDxhMB/Square44x44-Logo-altform-lightunplated-targetsize-256.png" height="30px" width="40px" style="margin: 2px"/> Watch Party <img src="https://media1.giphy.com/media/2irERnrC80bV4breHc/giphy.gif" width="120" height="80" style="margin: 10px" /></h1>
 
 ## Index
 - [Title of the Project](#Title-of-the-Project)
