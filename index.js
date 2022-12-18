@@ -12,6 +12,7 @@ import handleSocket from "./controllers/socketController.js";
 import userRoute from "./routes/userRoute.js";
 import roomRoute from "./routes/roomRoute.js";
 import videoSearchRoute from "./routes/videoSearchRoute.js";
+import { logCheck, logErr, logReq } from "./helpers/debugger.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -52,3 +53,7 @@ mongoose
     )
   )
   .catch((error) => console.log(error.message));
+
+  logCheck("Check is here.");
+  logErr("Error is here.");
+  logReq("Request is here.");
